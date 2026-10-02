@@ -27,18 +27,18 @@ test('every control shares the UI and runtime requirement; narrow settings remai
 test('runtime projection suppresses unsupported CSS without mutating saved desktop settings',()=>{
  const saved=configured(),before=structuredClone(saved),d=doc();
  for(const platform of [ios,android,win,mac]){
-  const caps=capabilities({platform,doc:d}),css=cssText(saved,()=>false,caps);
+  const caps=capabilities({platform,doc:d}),css=cssText(saved,caps);
   assert.match(css,/--h3-size: 1.7em/);assert.match(css,/--nav-item-size|nav-files-container/);
   assert.equal(css.includes('--yn-window-scrim'),platform===mac);
   assert.equal(css.includes('--tab-font-size: 18px'),platform===mac||platform===win);
   assert.equal(css.includes('.status-bar'),platform===mac||platform===win);
  }
  assert.deepEqual(saved,before);assert.equal(runtimeConfig(saved,capabilities({platform:ios})).controls.tabRadius,null);
- assert.ok(cssText(saved,()=>false,capabilities({platform:mac,doc:d})).includes('border-radius: 999px'));
+ assert.ok(cssText(saved,capabilities({platform:mac,doc:d})).includes('border-radius: 999px'));
 });
 test('each window gets its own capabilities and dispose removes generated CSS',()=>{
  function fake(caps){return {caps,defaultView:{closed:false},head:{appendChild(){}},createElement:()=>({dataset:{},textContent:'',remove(){this.removed=true;}})};}
- const c=configured(),engine=new BuiltinStyleEngine({config:c},()=>false,()=>[],d=>d.caps),a=fake(capabilities({platform:mac,doc:doc()})),b=fake(capabilities({platform:ios}));
+ const c=configured(),engine=new BuiltinStyleEngine({config:c},()=>[],d=>d.caps),a=fake(capabilities({platform:mac,doc:doc()})),b=fake(capabilities({platform:ios}));
  engine.attach(a);engine.attach(b);assert.match(engine.nodes.get(a).textContent,/--yn-window-scrim/);assert.ok(!engine.nodes.get(b).textContent.includes('--yn-window-scrim'));
  engine.previewControl('tabWidth',300);assert.match(engine.nodes.get(a).textContent,/--tab-max-width: 300px/);assert.ok(!engine.nodes.get(b).textContent.includes('--tab-max-width'));
  const nodes=[...engine.nodes.values()];engine.dispose();assert.ok(nodes.every(n=>n.removed));

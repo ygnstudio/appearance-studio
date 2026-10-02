@@ -1,6 +1,6 @@
 {
   "name": "appearance-studio",
-  "version": "4.3.0",
+  "version": "4.3.1",
   "private": true,
   "description": "Customize typography, colors and interface details without coding. Manage CSS snippets and share appearance presets for the default theme.",
   "scripts": {

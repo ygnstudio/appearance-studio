@@ -1,6 +1,5 @@
 'use strict';
-const APPEARANCE_FILE = '99-外观设置.css';
-// Stable keys map to the public --yn- variables. Units never come from user input.
+// Saved numeric keys remain compatible with existing plugin settings and v1 presets.
 const GROUPS = [
  ['阅读', [
   ['正文行高',1.65,'',1.2,2.4,.05,'越大越舒展。'],
@@ -39,36 +38,4 @@ const GROUPS = [
  ]]
 ];
 const FIELDS = GROUPS.flatMap(([group, items]) => items.map(([label, value, unit, min, max, step, help]) => ({group,label,key:'--yn-'+label,value,unit,min,max,step,help})));
-const LEGACY_FIELDS=FIELDS.filter(f=>f.key!=='--yn-标签底色浓度');
-function mask(source) { return source.replace(/\/\*[\s\S]*?(?:\*\/|$)|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g, s => s.replace(/[^\n]/g,' ')); }
-function parseAppearance(source) {
- const clean = mask(source), fields = new Map();
- // Deliberately support one plain body rule only. Ambiguous/scoped CSS stays in source mode.
- const blocks = [...clean.matchAll(/\bbody\s*\{([^{}]*)\}/g)].filter(m => { const before=clean.slice(0,m.index).trimEnd(); return (!before || before.endsWith('}')) && [...before].reduce((n,ch)=>n+(ch==='{'?1:ch==='}'?-1:0),0)===0; });
- if (blocks.length !== 1) return {fields, error:'此文件不再是单一 body 设置块，请使用源码编辑。'};
- const block = blocks[0], open = clean.indexOf('{', block.index), close = clean.indexOf('}', open);
- for (const field of FIELDS) {
-   const re = new RegExp(field.key + '\\s*:\\s*([^;{}]+);','g');
-   const matches = [...clean.matchAll(re)].filter(m => m.index === 0 || !/[-\w\u0080-\uFFFF]/.test(clean[m.index-1]));
-   if (matches.length !== 1 || matches[0].index <= open || matches[0].index >= close) continue;
-   const m = matches[0], valueStart = m.index + m[0].indexOf(':') + 1;
-   const valueText = source.slice(valueStart, m.index+m[0].length-1).trim();
-   const numeric = valueText.match(/^(-?(?:\d+(?:\.\d*)?|\.\d+))(px|em|%)?$/);
-   if (!numeric || (numeric[2]||'') !== field.unit || !Number.isFinite(Number(numeric[1]))) continue;
-   fields.set(field.key, {field,value:Number(numeric[1]),start:valueStart,end:m.index+m[0].length-1});
- }
- return {fields,error:fields.size ? '' : '未找到可直接调整的数值设置，请使用源码编辑。'};
-}
-function updateAppearance(source, changes) {
- const parsed = parseAppearance(source), replacements = [];
- if (parsed.error) throw new Error(parsed.error);
- for (const [key, value] of Object.entries(changes)) {
-   const item = parsed.fields.get(key);
-   if (!item) throw new Error('设置项缺失、重复或使用了表达式，请在源码中检查：' + key);
-   if (!Number.isFinite(value) || value < item.field.min || value > item.field.max) throw new Error(item.field.label + '应在 ' + item.field.min + '～' + item.field.max + ' 之间。');
-   replacements.push({...item,text:' ' + Number(value.toFixed(4)) + item.field.unit});
- }
- for (const r of replacements.sort((a,b) => b.start-a.start)) source = source.slice(0,r.start) + r.text + source.slice(r.end);
- return source;
-}
-module.exports = {APPEARANCE_FILE,GROUPS,FIELDS,LEGACY_FIELDS,parseAppearance,updateAppearance};
+module.exports = {FIELDS};

@@ -1,10 +1,8 @@
 'use strict';
+const path=require('node:path');
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
-const fs=require('node:fs');
-const path=require('node:path');
 const {SnippetStore,ConflictError,fileName}=require('../src/core');
-const {FIELDS,LEGACY_FIELDS,parseAppearance,updateAppearance}=require('../src/appearance');
 const {highlightCSS}=require('../src/highlight');
 function fixture(configDir='.obsidian'){
  const root=configDir+'/snippets',file=root+'/a.css',files=new Map([[file,'old']]),dirs=new Set([root]),on=new Set(['a']);
@@ -43,15 +41,7 @@ test('discard checkpoints draft and reads disk',async()=>{const f=fixture(),s=aw
 test('history is bounded, drafts are not evicted',async()=>{const f=fixture();for(let i=0;i<15;i++)await f.store.remember(f.file,''+i,'save');assert.equal(f.data.history.length,10);assert.equal(f.data.history[0].text,'14');});
 test('custom configuration folder, uppercase suffix, stale enabled key',async()=>{const f=fixture('.custom');f.on.add('NEW');const dest=await f.store.create('NEW.CSS','x');assert.equal(dest,'.custom/snippets/NEW.css');assert.ok(!f.on.has('NEW'));assert.ok((await f.store.list()).includes(dest));});
 test('path traversal and empty names rejected',()=>{const f=fixture();for(const name of ['', '..','../other','a/b','a\\b','x:bad'])assert.throws(()=>fileName(name));assert.throws(()=>f.store.check('notes/a.css'));assert.throws(()=>f.store.check(f.root+'/../notes/a.css'));});
-const source=fs.readFileSync(path.join(__dirname,'fixtures/appearance.css'),'utf8');
-test('legacy settings parse all 24 active fields and retain the original dark value',()=>{const result=parseAppearance(source);assert.equal(result.error,'');assert.equal(result.fields.size,24);assert.equal(result.fields.has('--yn-笔记底色不透明度'),false);for(const f of LEGACY_FIELDS)assert.equal(result.fields.get(f.key).value,f.key==='--yn-深色窗口不透明度'?80:f.value);});
-test('appearance edit changes only the targeted declaration',()=>{const out=updateAppearance(source,{'--yn-正文行高':1.8});assert.equal(out,source.replace('  --yn-正文行高: 1.65;','  --yn-正文行高: 1.8;'));});
-test('multiple fields preserve units, comments and unrelated CSS',()=>{const out=updateAppearance(source,{'--yn-段落间距':1.2,'--yn-高亮浓度':35});assert.ok(out.includes('--yn-段落间距: 1.2em;'));assert.ok(out.includes('--yn-高亮浓度: 35%;'));assert.equal((out.match(/\/\*/g)||[]).length,(source.match(/\/\*/g)||[]).length);});
-test('ambiguous, missing, expression and wrong unit cannot be silently replaced',()=>{for(const modified of [source.replace('  --yn-正文行高: 1.65;','  --yn-正文行高: 1.65; --yn-正文行高: 2;'),source.replace('  --yn-正文行高: 1.65;',''),source.replace('  --yn-正文行高: 1.65;','  --yn-正文行高: calc(1 + .5);'),source.replace('  --yn-正文行高: 1.65;','  --yn-正文行高: 2px;')])assert.throws(()=>updateAppearance(modified,{'--yn-正文行高':1.8}));});
-test('invalid range and NaN rejected',()=>{for(const value of [NaN,Infinity,100,-1])assert.throws(()=>updateAppearance(source,{'--yn-正文行高':value}));});
 test('syntax highlighter escapes markup and recognizes Chinese variables',()=>{const html=highlightCSS('/* <img onerror=x> */ body { --yn-正文行高: 1.65; }');assert.ok(!html.includes('<img'));assert.match(html,/se-tok-property">--yn-正文行高/);});
-test('two body blocks are ambiguous and cannot use appearance editing',()=>{const two=source+'\nbody { --yn-其他: 1; }';assert.ok(parseAppearance(two).error);});
-test('a similar variable prefix cannot be edited as the public key',()=>{const modified=source.replace('  --yn-正文行高: 1.65;','  --custom--yn-正文行高: 1.65;');assert.throws(()=>updateAppearance(modified,{'--yn-正文行高':1.8}));});
 test('reverting an external change clears conflict',async()=>{const f=fixture(),s=await f.store.open(f.file);f.store.edit(s,'draft');f.files.set(f.file,'external');await f.store.refresh(s);f.files.set(f.file,'old');await f.store.refresh(s);assert.equal(s.conflict,false);assert.equal(s.text,'draft');});
 test('external change during backup is checked again before write',async()=>{const f=fixture(),s=await f.store.open(f.file);f.store.edit(s,'draft');f.store.persist=async()=>{f.files.set(f.file,'external during backup');};await assert.rejects(f.store.save(s),ConflictError);assert.equal(f.files.get(f.file),'external during backup');});
 test('discard never overwrites input arriving during history checkpoint',async()=>{const f=fixture(),s=await f.store.open(f.file);f.store.edit(s,'first');const original=f.store.persist;f.store.persist=async()=>{f.store.edit(s,'new input');await original();};await assert.rejects(f.store.discard(s),/新/);assert.equal(s.text,'new input');assert.equal(f.data.drafts[f.file].text,'new input');});

@@ -2,7 +2,6 @@
 const {ItemView} = require('obsidian');
 const {keyOf,baseName} = require('./core');
 const {el,button,ask,report,HistoryModal} = require('./ui');
-const {LEGACY_FILES} = require('./builtin');
 const {renderBuiltin,syncBuiltin} = require('./builtin-view');
 const {highlightCSS} = require('./highlight');
 const VIEW_TYPE='snippet-editor-view';
@@ -15,8 +14,7 @@ class SnippetEditorView extends ItemView {
  async setState(state,result){
   await super.setState(state,result);
   if(state?.file && state.file!==this.session?.path){
-   if(LEGACY_FILES.includes(baseName(state.file))&&state.file.startsWith(this.plugin.store.dir+'/')&&this.plugin.data.builtinMigration?.status==='complete'&&!await this.app.vault.adapter.exists(state.file))await this.openBuiltin();
-   else await this.openEditor(state.file);
+   await this.openEditor(state.file);
   }else if(state?.page==='custom')await this.openCustom();
  }
  async onOpen(){

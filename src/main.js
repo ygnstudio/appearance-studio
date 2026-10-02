@@ -40,9 +40,9 @@ class SnippetEditorPlugin extends Plugin {
    else if(typeof css?.loadSnippets==='function')await css.loadSnippets();
    else throw new Error('片段刷新接口不可用，请在设置 → 外观刷新。');
   }});
-  this.builtin=new BuiltinManager({adapter:this.app.vault.adapter,configDir:this.app.vault.configDir||'.obsidian',data:this.data,persist:()=>this.persist(),enabled:path=>this.store.enabled(path),setEnabled:(path,on)=>this.store.setEnabled(path,on),changed:()=>{this.builtinStyles?.apply();this.nativeAppearance?.apply();this.store.emit();}});
+  this.builtin=new BuiltinManager({data:this.data,persist:()=>this.persist(),changed:()=>{this.builtinStyles?.apply();this.nativeAppearance?.apply();this.store.emit();}});
   this.capabilities=doc=>{const target=doc||(typeof document!=='undefined'?document:undefined);return capabilities({platform:Platform,app:this.app,doc:target,state:this.nativeAppearance?.status(target),media:this.nativeAppearance?.windows.get(target)});};
-  this.builtinStyles=new BuiltinStyleEngine(this.builtin,name=>this.store.enabled(this.store.dir+'/'+name),()=>this.snippetStyleNodes(),doc=>this.capabilities(doc));
+  this.builtinStyles=new BuiltinStyleEngine(this.builtin,()=>this.snippetStyleNodes(),doc=>this.capabilities(doc));
   this.nativeAppearance=new NativeAppearance({app:this.app,platform:Platform,config:()=>this.builtin.config,changed:()=>{this.builtinStyles.apply();this.store.emit();}});
   try{await this.builtin.initialize();}catch(error){this.builtin.error=error.message;report(error);}
   const attach=doc=>{this.builtinStyles.attach(doc);this.nativeAppearance.attach(doc);};

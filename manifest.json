@@ -1,7 +1,7 @@
 {
   "id": "snippet-editor",
   "name": "Appearance Studio",
-  "version": "4.3.0",
+  "version": "4.3.1",
   "minAppVersion": "1.7.2",
   "description": "Customize typography, colors and interface details without coding. Manage CSS snippets and share appearance presets for the default theme.",
   "author": "YanGN",

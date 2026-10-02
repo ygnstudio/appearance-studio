@@ -18,10 +18,10 @@ npm run check
 | --- | --- |
 | `src/constants.js` | 保存时序、历史上限、布局断点和触摸尺寸等实现常量 |
 | `src/core.js` | 文件操作、会话、保存队列、冲突与历史 |
-| `src/builtin.js` / `src/builtin-view.js` | 内置样式、迁移、窗口生命周期与可视化设置 |
+| `src/builtin.js` / `src/builtin-view.js` | 内置样式、配置兼容、窗口生命周期与可视化设置 |
 | `src/control-model.js` / `src/control-view.js` | 按对象的统一参数、迁移、样式生成与控件 |
-| `assets/builtin/` | 当前窗口/状态栏样式与旧片段迁移参考 |
-| `src/appearance.js` | 中文参数定义、数值验证、保留原文的精确修改 |
+| `assets/builtin/` | 窗口材质和状态栏的内部样式 |
+| `src/appearance.js` | 已保存数值参数及旧版分享格式的兼容定义 |
 | `src/view.js` | 列表、外观表单、源码编辑 |
 | `src/ui.js` | 输入确认、快速搜索、历史恢复、选色 |
 | `src/main.js` | 生命周期、配置迁移、持久化、自动保存、Obsidian 适配 |
@@ -39,7 +39,7 @@ npm run check
 
 提交前检查生成文件与源码一致，并运行相关浏览器夹具。浏览器测试需要自行准备 Playwright 和 Chromium，不包含在插件运行依赖中。
 
-已在 Obsidian 1.14.3 对应的原生 CSS 浏览器夹具检查浅/深色、260/320/390/540/768/1440px 分栏，以及旧片段迁移、归档、内置开关、卸载清理、外观保存、默认值、源码保存、冲突、副本、搜索、重命名、开关和回收站。114 项逻辑测试覆盖异步写入与恢复路径。
+已在 Obsidian 1.14.3 对应的原生 CSS 浏览器夹具检查浅/深色、260/320/390/540/768/1440px 分栏，以及内置开关、卸载清理、外观保存、默认值、源码保存、冲突、副本、搜索、重命名、开关和回收站。逻辑测试覆盖异步写入与恢复路径。
 
 浏览器夹具使用模拟 Obsidian API；移动设备的输入法、软键盘、VoiceOver 与 iCloud 跨设备同步仍需真机验证。不含打印和笔记导出；支持外观配置导入导出。
 
@@ -59,7 +59,7 @@ npm run check
 
 跨平台检查：`node tests/device-browser-check.js`，使用与其他浏览器夹具相同的环境变量，覆盖平台控件、运行时样式、导入跳过与撤销、临时禁用和布局切换。
 
-实现常量集中在 `src/constants.js`，参数范围仍由设置模型定义；平台能力在 `src/capabilities.js` 维护。`note-prose`、`note-list`、图片 `center` 标记及旧 CSS 内容属于兼容约定，不随常量重构改名。浏览器测试使用系统临时目录，可通过 `ARTIFACT_DIR` 覆盖。
+实现常量集中在 `src/constants.js`，参数范围仍由设置模型定义；平台能力在 `src/capabilities.js` 维护。`note-prose`、`note-list`、图片 `center` 标记属于兼容约定，不随常量重构改名。浏览器测试使用系统临时目录，可通过 `ARTIFACT_DIR` 覆盖。
 
 ## 提交问题和改动
 

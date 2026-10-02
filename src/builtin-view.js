@@ -5,7 +5,6 @@ const {GROUPS,CONTROLS,defaultColor}=require('./control-model');
 const {renderControl,syncControls}=require('./control-view');
 const {PresetModal,undoImport}=require('./preset-view');
 const {supports}=require('./capabilities');
-const {LEGACY_FILES}=require('./builtin');
 function renderBuiltin(view,c){
  const plugin=view.plugin,manager=plugin.builtin,panel=plugin.data.appearancePanel||{},caps=plugin.capabilities(c.ownerDocument);
  view.capabilityKey=caps.layoutKey;view.builtinMaterial=null;view.builtinGlassFields=null;view.builtinNativeStatus=null;
@@ -16,7 +15,7 @@ function renderBuiltin(view,c){
  c.dataset.density=panel.density==='comfortable'?'comfortable':'compact';
  const disclosures=()=>[...form.querySelectorAll('details')];button(tools,'全部展开',()=>{for(const d of disclosures())d.open=true;});button(tools,'全部折叠',()=>{for(const d of disclosures())d.open=false;});view.undoImportButton=button(tools,'撤销上次导入',()=>ask(view.app,{title:'撤销上次导入',description:'恢复导入前的外观配置；导入后手动调整的参数也会被替换。',label:'撤销导入',action:()=>undoImport(plugin,c.ownerDocument)}));
  const search=el(c,'input','se-appearance-search');search.type='search';search.placeholder='搜索对象或设置，如：三级标题、代码圆角';search.setAttribute('aria-label','查找外观设置');view.builtinSearch=search;
- const form=el(c,'div','se-appearance');view.builtinLegacy=el(form,'p','se-warning');const sections=[],cards=[];view.objectControls=new Map();view.builtinControls=new Map();view.builtinRanges=new Map();view.builtinModuleButtons=new Map();view.panelGroups=[];
+ const form=el(c,'div','se-appearance');const sections=[],cards=[];view.objectControls=new Map();view.builtinControls=new Map();view.builtinRanges=new Map();view.builtinModuleButtons=new Map();view.panelGroups=[];
  const disclosure=(parent,title,key,cls='se-setting-group')=>{const node=el(parent,'details',cls);node.setAttribute('role','group');node.setAttribute('aria-label',title);const summary=el(node,'summary',cls==='se-setting-group'?'se-group-summary':'se-object-summary');el(summary,'span','se-group-title',title);node.open=panel.groups?.[key]??(title==='标题');node.addEventListener('toggle',()=>{if(search.value.trim())return;plugin.data.appearancePanel={...plugin.data.appearancePanel,groups:{...plugin.data.appearancePanel?.groups,[key]:node.open}};plugin.persist().catch(report);});return node;};
  const toggle=(parent,label,id,inverse=false,scope='modules')=>{const row=el(parent,'label','se-inline-toggle');el(row,'span','',label);const holder=el(row,'span','se-switch'),input=el(holder,'input');input.type='checkbox';input.setAttribute('role','switch');input.setAttribute('aria-label',label);el(holder,'span','se-switch-track').setAttribute('aria-hidden','true');input.addEventListener('change',async()=>{input.disabled=true;try{const value=inverse?!input.checked:input.checked;await manager.update(scope?{[scope]:{[id]:value}}:{[id]:value});}catch(e){report(e);}finally{input.disabled=false;syncBuiltin(view);}});view.builtinModuleButtons.set(id,{input,inverse,scope});return row;};
  const special=(card,row,text)=>sections.push({card,rows:[{row,text}],container:row,parentText:card.getAttribute('aria-label')});
@@ -50,6 +49,6 @@ function renderBuiltin(view,c){
 }
 function syncBuiltin(view){const plugin=view.plugin,config=plugin.builtin.config;if(!config||!view.objectControls)return;const caps=plugin.capabilities(view.contentEl.ownerDocument);if(view.capabilityKey!==caps.layoutKey){view.render().catch(report);return;}syncControls(view);view.undoImportButton.hidden=!plugin.data.appearanceUndo;for(const [id,{input,inverse,scope}]of view.builtinModuleButtons){const value=(scope?config[scope]:config)[id];input.checked=inverse?!value:value;}if(view.builtinMaterial){view.builtinMaterial.value=config.modules.translucency?config.glassMaterial:'off';view.builtinMaterial.disabled=!caps.materialEnabled;view.builtinGlassFields.disabled=!config.modules.translucency||!caps.materialEnabled;}for(const controls of [view.builtinControls,view.builtinRanges])for(const [key,input]of controls)if(input!==input.ownerDocument.activeElement&&!(key in plugin.builtinStyles.previewValues))input.value=inversePercent(config.values[key]);
  if(view.builtinNativeStatus){view.builtinNativeStatus.textContent=caps.materialReason||(config.modules.translucency?'背景模糊由系统材质决定。':'');view.builtinNativeStatus.hidden=!view.builtinNativeStatus.textContent;}
- const duplicates=LEGACY_FILES.filter(name=>plugin.builtin.enabled(plugin.builtin.dir+'/'+name));view.builtinLegacy.hidden=!duplicates.length;view.builtinLegacy.textContent='请停用重复的旧片段：'+duplicates.join('、');view.builtinStatus.textContent=config.enabled?'已保存':'外观已暂停，可在插件设置中恢复。';
+ view.builtinStatus.textContent=config.enabled?'已保存':'外观已暂停，可在插件设置中恢复。';
 }
 module.exports={renderBuiltin,syncBuiltin};
