@@ -1,0 +1,39 @@
+/* 可独立开关；还需启用 Obsidian 外观中的“半透明窗口”。
+ * 浓度调整请打开「99-外观设置.css」。
+ * 仅桌面普通窗口生效，手机 / 全屏 / 弹出窗口使用原生背景。
+ * 内容保留较高背景浓度以稳定对比度，插件视图保留自己的背景。
+ * 不管理标签页、不改变正文组件参数、不使用全局 !important。
+ */
+body.is-translucent:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal) {
+  --yn-window-scrim: color-mix(in srgb, var(--background-primary) var(--yn-深色窗口不透明度, 80%), transparent);
+  --workspace-background-translucent: var(--yn-window-scrim);
+}
+body.is-translucent.theme-light:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal) {
+  --yn-window-scrim: color-mix(in srgb, var(--background-primary) var(--yn-浅色窗口不透明度, 65%), transparent);
+}
+body.is-translucent:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal)
+  :is(.workspace, .workspace-split, .workspace-tabs, .workspace-tab-container, .workspace-leaf, .workspace-tab-header-container, .workspace-tab-header-container-inner, .workspace-ribbon, .workspace-sidedock-vault-profile, .titlebar) {
+  background-color: transparent;
+}
+body.is-translucent:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal)
+  .workspace-leaf-content[data-type="markdown"] {
+  background-color: color-mix(in srgb, var(--background-primary) var(--yn-笔记底色不透明度, 75%), transparent);
+}
+body.is-translucent:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal)
+  .workspace-leaf-content[data-type="markdown"] :is(.view-header, .view-content, .markdown-reading-view, .markdown-preview-view, .markdown-source-view, .markdown-source-view > .cm-editor, .markdown-source-view > .cm-editor > .cm-scroller, .markdown-source-view > .cm-editor > .cm-scroller > .cm-gutters) {
+  background-color: transparent;
+}
+/* 拖拽目标需要可辨识的实底。 */
+body.is-translucent:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal)
+  .workspace-fake-target-overlay {
+  background-color: var(--background-primary);
+}
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  body.is-translucent:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal) {
+    --workspace-background-translucent: var(--background-primary);
+  }
+  body.is-translucent:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal)
+    .workspace-leaf-content[data-type="markdown"] {
+    background-color: var(--background-primary);
+  }
+}

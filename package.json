@@ -1,0 +1,29 @@
+{
+  "name": "appearance-studio",
+  "version": "4.3.0",
+  "private": true,
+  "description": "Customize typography, colors and interface details without coding. Manage CSS snippets and share appearance presets for the default theme.",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "test": "node --test tests/*.test.js",
+    "check": "node scripts/build.js && node --check main.js && node --test tests/*.test.js",
+    "package": "npm run check && node scripts/package.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "main.js",
+    "manifest.json",
+    "styles.css"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ygnstudio/appearance-studio.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ygnstudio/appearance-studio/issues"
+  },
+  "homepage": "https://github.com/ygnstudio/appearance-studio#readme"
+}

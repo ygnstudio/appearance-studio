@@ -1,0 +1,59 @@
+/* 可独立开关；还需启用 Obsidian 外观中的“半透明窗口”。
+ * 浓度在插件「内置外观 → 窗口半透明」中调整。
+ * 仅桌面普通窗口生效，手机 / 全屏 / 弹出窗口使用原生背景。
+ * 笔记保留可调底色；工作区、侧栏与内置外观面板共享窗口玻璃。
+ * 仅隐藏工作区结构分隔线，保留内容边框、键盘焦点与拖动反馈。
+ */
+body.is-translucent:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal) {
+  --yn-window-scrim: color-mix(in srgb, var(--background-primary) var(--yn-深色窗口不透明度, 80%), transparent);
+  --workspace-background-translucent: var(--yn-window-scrim);
+  --divider-color: transparent;
+  --tab-outline-width: 0px;
+  --tab-divider-color: transparent;
+  --status-bar-border-width: 0px;
+  --file-header-border: none;
+  --titlebar-border-width: 0px;
+}
+body.is-translucent.theme-light:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal) {
+  --yn-window-scrim: color-mix(in srgb, var(--background-primary) var(--yn-浅色窗口不透明度, 65%), transparent);
+}
+body.is-translucent:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal)
+  :is(.workspace, .workspace-split, .workspace-tabs, .workspace-tab-container, .workspace-leaf, .workspace-tab-header-container, .workspace-tab-header-container-inner, .workspace-ribbon, .workspace-sidedock-vault-profile, .sidebar-toggle-button, .status-bar, .titlebar) {
+  background-color: transparent;
+}
+body.is-translucent:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal)
+  .workspace-leaf-content[data-type="markdown"] {
+  background-color: color-mix(in srgb, var(--background-primary) var(--yn-笔记底色不透明度, 75%), transparent);
+}
+body.is-translucent:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal)
+  .workspace-leaf-content[data-type="markdown"] :is(.view-header, .view-content, .markdown-reading-view, .markdown-preview-view, .markdown-source-view, .markdown-source-view > .cm-editor, .markdown-source-view > .cm-editor > .cm-scroller, .markdown-source-view > .cm-editor > .cm-scroller > .cm-gutters) {
+  background-color: transparent;
+}
+/* 原生 view-content 和 view-header 会盖住玻璃；只清理已知工作区视图的外层。 */
+body.is-translucent:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal)
+  .workspace-leaf-content:is([data-type="snippet-editor-view"], [data-type="file-explorer"], [data-type="backlink"], [data-type="outgoing-link"], [data-type="outline"], [data-type="search"], [data-type="bookmarks"]),
+body.is-translucent:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal)
+  .workspace-leaf-content:is([data-type="snippet-editor-view"], [data-type="file-explorer"], [data-type="backlink"], [data-type="outgoing-link"], [data-type="outline"], [data-type="search"], [data-type="bookmarks"]) > :is(.view-header, .view-content),
+body.is-translucent:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal)
+  .workspace-ribbon.mod-left::before {
+  background-color: transparent;
+}
+body.is-translucent:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal)
+  .workspace-ribbon {
+  border-color: transparent;
+}
+/* 拖拽目标需要可辨识的实底。 */
+body.is-translucent:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal)
+  .workspace-fake-target-overlay {
+  background-color: var(--background-primary);
+}
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  body.is-translucent:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal) {
+    --workspace-background-translucent: var(--background-primary);
+    --divider-color: var(--background-modifier-border);
+  }
+  body.is-translucent:not(.is-mobile):not(.is-fullscreen):not(.is-popout-window):not(.is-popout-modal)
+    .workspace-leaf-content[data-type="markdown"] {
+    background-color: var(--background-primary);
+  }
+}

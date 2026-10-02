@@ -1,0 +1,52 @@
+/* Window material is controlled by NativeAppearance. Every surface gets one tint;
+ * note opacity is independent of chrome opacity, so layers never compound.
+ * The is-translucent fallback also works when the native bridge is unavailable.
+ */
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) {
+  --yn-window-opacity: var(--yn-深色窗口不透明度, 80%);
+  --yn-window-scrim: color-mix(in srgb, var(--background-primary) var(--yn-window-opacity), transparent);
+  --divider-color: transparent;
+  --tab-outline-width: 0px;
+  --tab-divider-color: transparent;
+  --status-bar-border-width: 0px;
+  --file-header-border: none;
+  --titlebar-border-width: 0px;
+  --workspace-background-translucent: transparent;
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal).theme-light {
+  --yn-window-opacity: var(--yn-浅色窗口不透明度, 65%);
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) :is(.app-container, .workspace, .workspace-split, .workspace-tabs, .workspace-tab-container, .workspace-leaf, .workspace-tab-header-container-inner, .sidebar-toggle-button) {
+  background-color: transparent;
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) :is(.workspace-tab-header-container, .workspace-ribbon, .workspace-sidedock-vault-profile, .titlebar) {
+  background-color: var(--yn-window-scrim) !important;
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) .workspace-ribbon.mod-left::before {
+  background-color: transparent !important;
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) :is(.workspace-leaf-content, .status-bar) {
+  background-color: var(--yn-window-scrim);
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) .workspace-leaf-content[data-type="markdown"] {
+  background-color: color-mix(in srgb, var(--background-primary) var(--yn-笔记底色不透明度, 75%), transparent);
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) .workspace-leaf-content:is([data-type="markdown"], [data-type="snippet-editor-view"], [data-type="file-explorer"], [data-type="backlink"], [data-type="outgoing-link"], [data-type="outline"], [data-type="search"], [data-type="bookmarks"]) > :is(.view-header, .view-content) {
+  background-color: transparent;
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) .workspace-leaf-content[data-type="markdown"] :is(.markdown-reading-view, .markdown-preview-view, .markdown-source-view, .markdown-source-view > .cm-editor, .markdown-source-view > .cm-editor > .cm-scroller, .markdown-source-view > .cm-editor > .cm-scroller > .cm-gutters) {
+  background-color: transparent;
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) .workspace-ribbon {
+  border-color: transparent;
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) .workspace-fake-target-overlay {
+  background-color: var(--background-primary);
+}
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) {
+  --yn-window-opacity: 100%;
+  --yn-笔记底色不透明度: 100%;
+  --divider-color: var(--background-modifier-border);
+}
+}

@@ -1,0 +1,6 @@
+.DS_Store
+
+# Local runtime data and generated release output
+/data.json
+/dist/
+/node_modules/

@@ -1,0 +1,9 @@
+/* 测试 02：直接修改元素，比仅通过主题变量赋色更优先。
+   阅读与实时预览必须分别覆盖，源码编辑模式不参与。 */
+.markdown-preview-view.compat-demo h2,
+.markdown-source-view.is-live-preview.compat-demo .cm-header-2 {
+  color: #b35cba;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}

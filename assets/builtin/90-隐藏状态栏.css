@@ -1,0 +1,4 @@
+/* 可独立开关；关闭本片段即可恢复状态栏。 */
+.status-bar {
+  display: none;
+}

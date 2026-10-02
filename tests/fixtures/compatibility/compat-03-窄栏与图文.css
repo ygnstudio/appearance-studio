@@ -1,0 +1,16 @@
+/* 测试 03：分栏宽度而非整台设备宽度；保留行内图片。
+   --compat-card-padding 是本片段自己的变量，不应被插件改写。 */
+.workspace-leaf-content[data-type="markdown"]:has(.compat-demo) {
+  container-type: inline-size;
+  container-name: compat-note;
+}
+.compat-demo { --compat-card-padding: 18px; }
+.compat-demo .callout { padding: var(--compat-card-padding); border-radius: 12px; }
+.compat-demo img { max-width: 100%; height: auto; }
+.compat-demo img[alt~="center"] { display: block; margin-inline: auto; }
+@container compat-note (max-width: 540px) {
+  .compat-demo { --compat-card-padding: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .compat-demo .callout { transition: none; }
+}

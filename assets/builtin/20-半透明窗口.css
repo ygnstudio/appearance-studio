@@ -1,0 +1,57 @@
+/* Window material is controlled by NativeAppearance. Notes and chrome share
+ * one tint each; nested content stays transparent so layers never compound.
+ * The is-translucent fallback also works when the native bridge is unavailable.
+ */
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) {
+  --yn-window-opacity: var(--yn-深色窗口不透明度, 45%);
+  --yn-window-tint: #0b0d12;
+  --yn-window-scrim: color-mix(in srgb, var(--yn-window-tint) var(--yn-window-opacity), transparent);
+  --divider-color: transparent;
+  --tab-outline-width: 0px;
+  --tab-divider-color: transparent;
+  --status-bar-border-width: 0px;
+  --file-header-border: none;
+  --titlebar-border-width: 0px;
+  --workspace-background-translucent: transparent;
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal).theme-light {
+  --yn-window-opacity: var(--yn-浅色窗口不透明度, 65%);
+  --yn-window-tint: #fafafa;
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) :is(.app-container, .workspace, .workspace-split, .workspace-tabs, .workspace-tab-container, .workspace-leaf, .workspace-tab-header-container-inner, .sidebar-toggle-button) {
+  background-color: transparent;
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) :is(.workspace-tab-header-container, .workspace-ribbon, .workspace-sidedock-vault-profile, .titlebar) {
+  background-color: var(--yn-window-scrim) !important;
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) .workspace-ribbon:is(.mod-left, .mod-primary)::before {
+  /* This area sits above the ribbon, not inside its painted rectangle. */
+  background-color: var(--yn-window-scrim) !important;
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) :is(.workspace-leaf-content, .status-bar) {
+  background-color: var(--yn-window-scrim);
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) .workspace-leaf-content:is([data-type="markdown"], [data-type="snippet-editor-view"], [data-type="file-explorer"], [data-type="backlink"], [data-type="outgoing-link"], [data-type="outline"], [data-type="search"], [data-type="bookmarks"]) > :is(.view-header, .view-content) {
+  background-color: transparent;
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) .workspace-leaf-content[data-type="markdown"] :is(.markdown-reading-view, .markdown-preview-view, .markdown-source-view, .markdown-source-view > .cm-editor, .markdown-source-view > .cm-editor > .cm-scroller, .markdown-source-view > .cm-editor > .cm-scroller > .cm-gutters) {
+  background-color: transparent;
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) .workspace-ribbon {
+  border-color: transparent;
+}
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) .workspace-fake-target-overlay {
+  background-color: var(--background-primary);
+}
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) {
+  --yn-window-opacity: 100%;
+  --divider-color: var(--background-modifier-border);
+}
+}
+
+/* Native connecting curves are opaque shadows, unsuitable over real glass. */
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) .workspace-split.mod-root .workspace-tab-header-container .workspace-tab-header.is-active::before,
+body:is(.se-native-glass, .is-translucent):not(.se-window-solid):not(.is-mobile):not(.is-fullscreen):not(.is-popout-modal) .workspace-split.mod-root .workspace-tab-header-container .workspace-tab-header.is-active::after {
+  box-shadow: none;
+}

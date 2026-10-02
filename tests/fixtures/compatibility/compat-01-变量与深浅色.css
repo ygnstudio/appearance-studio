@@ -1,0 +1,14 @@
+/* 测试 01：只用默认主题变量。仅影响 cssclasses: compat-demo 的笔记。
+   插件 4.1 起，同元素的变量冲突由本片段优先。
+   停用本片段会恢复内置设置。 */
+:where(.compat-demo) {
+  --h1-color: #b34b36;
+  --h3-color: #267a67;
+  --h1-size: 1.9em;
+  --blockquote-border-color: #267a67;
+}
+.theme-dark :where(.compat-demo) {
+  --h1-color: #ee9b82;
+  --h3-color: #70cbb1;
+  --blockquote-border-color: #70cbb1;
+}

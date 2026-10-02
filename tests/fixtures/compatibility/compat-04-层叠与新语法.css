@@ -1,0 +1,11 @@
+/* 测试 04：@layer 的普通声明低于未分层普通声明。
+   color-mix / :is / :where 保持原样保存，不转换成内置设置。 */
+@layer compat-examples {
+  :where(.compat-demo) {
+    --h4-color: #a8752c;
+    --compat-layer-token: 17px;
+  }
+  :where(.compat-demo) :is(blockquote, .callout) {
+    border-inline-start: 3px solid color-mix(in srgb, var(--interactive-accent) 60%, transparent);
+  }
+}

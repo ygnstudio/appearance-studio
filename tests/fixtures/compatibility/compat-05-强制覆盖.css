@@ -1,0 +1,7 @@
+/* 测试 05：故意制造冲突。
+   !important 直接写在标题元素上，因此会覆盖内置的标题颜色。
+   停用本片段才会恢复内置颜色；这属于 CSS 正常优先级。 */
+.markdown-preview-view.compat-demo h3,
+.markdown-source-view.is-live-preview.compat-demo .cm-header-3 {
+  color: #d05a68 !important;
+}
